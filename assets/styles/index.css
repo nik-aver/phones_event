@@ -1,0 +1,15 @@
+@import url("optimizer.css");
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-weight: 500;
+  color: #151616;
+}
+
+#__nuxt {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
