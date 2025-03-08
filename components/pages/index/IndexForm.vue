@@ -89,9 +89,9 @@ const changeSelectHandler = ({ event = null, queryName = null }) => {
 <style scoped>
 .form {
   display: flex;
-  flex-grow: 1;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
 }
 </style>

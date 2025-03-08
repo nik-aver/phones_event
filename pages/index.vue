@@ -1,12 +1,12 @@
 <template>
   <main class="main">
     <IndexForm v-if="!column || !row" />
-    <ClientOnly v-else>
-      <IndexVideo
-        :column="column"
-        :row="row"
-      />
-    </ClientOnly>
+
+    <IndexVideo
+      v-else
+      :column="column"
+      :row="row"
+    />
 
     <div
       style="

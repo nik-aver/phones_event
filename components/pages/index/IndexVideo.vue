@@ -6,20 +6,17 @@
     loop
     muted
     playsinline
-    @loadedmetadata="onLoadedMetaDataHandler"
     :style="{
-      height: windowHeight * INDEX_META.maxRow + 'px',
-      left: `${-(videoWidth / INDEX_META.maxColumn) * (props.column - 1)}px`,
-      top: `${-(videoHeight / INDEX_META.maxRow) * (props.row - 1)}px`,
-      width: windowWidth * INDEX_META.maxColumn + 'px',
+      '--max-column': INDEX_META.maxColumn,
+      '--max-row': INDEX_META.maxRow,
+      '--column': props.column,
+      '--row': props.row,
     }"
     src="/public/video.mp4"
   />
 </template>
 
 <script setup>
-import { useElementSize, useWindowSize } from "@vueuse/core";
-
 import { INDEX_META } from "~/constants/pages/index/meta.js";
 
 const props = defineProps({
@@ -32,26 +29,20 @@ const props = defineProps({
     type: Number,
   },
 });
-
-const video = ref(null);
-const initialVideoWidth = ref(null);
-const initialVideoHeight = ref(null);
-
-const { height: windowHeight, width: windowWidth } = useWindowSize();
-const { height: videoHeight, width: videoWidth } = useElementSize(video);
-
-const onLoadedMetaDataHandler = (event) => {
-  initialVideoWidth.value = event.target.videoWidth;
-  initialVideoHeight.value = event.target.videoHeight;
-};
 </script>
 
 <style scoped>
 .video {
+  --max-column: 0;
+  --max-row: 0;
+  --row: 0;
+  --column: 0;
+
   position: absolute;
-  top: 0;
-  left: 0;
+  top: calc(100% * (var(--row) - 1) * -1);
+  left: calc(100% * (var(--column) - 1) * -1);
+  width: calc(100% * var(--max-column));
+  height: calc(100% * var(--max-row));
   object-fit: fill;
-  object-position: 50% 50%;
 }
 </style>
