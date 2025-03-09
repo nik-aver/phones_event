@@ -65,7 +65,7 @@ const startVideo = () => {
   const millisecond = date.getMilliseconds();
   const seconds = date.getSeconds();
 
-  timer.value = 60 - seconds.toString().split("").pop();
+  timer.value = 60 - seconds;
 
   setTimeout(
     () => {
