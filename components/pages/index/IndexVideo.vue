@@ -6,7 +6,7 @@
       muted
       loop
       playsinline
-      preload="metadata"
+      preload="auto"
       :style="{
         '--max-column': INDEX_META.maxColumn,
         '--max-row': INDEX_META.maxRow,
@@ -45,23 +45,9 @@ const video = ref(null);
 const timer = ref(null);
 
 let intervalTimer = null;
-let intervalVideo = null;
-
-// const videoPlay = () => {
-//   if (video.value) {
-//     video.value.play();
-//     intervalVideo = setInterval(() => {
-//       video.value.currentTime = 0;
-//     }, 10000);
-//   }
-// };
 
 const destroyIntervalTimer = () => {
   clearInterval(intervalTimer);
-};
-
-const destroyIntervalVideo = () => {
-  clearInterval(intervalVideo);
 };
 
 const createIntervalTimer = () => {
@@ -79,11 +65,13 @@ const startVideo = () => {
   const millisecond = date.getMilliseconds();
   const seconds = date.getSeconds();
 
-  timer.value = 10 - seconds.toString().split("").pop();
+  timer.value = 60 - seconds.toString().split("").pop();
 
   setTimeout(
     () => {
-      video.value.play();
+      if (video.value) {
+        video.value.play();
+      }
     },
     timer.value * 1000 - millisecond,
   );
@@ -97,7 +85,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   destroyIntervalTimer();
-  destroyIntervalVideo();
 });
 </script>
 
