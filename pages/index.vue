@@ -2,11 +2,12 @@
   <main class="main">
     <IndexForm v-if="!column || !row" />
 
-    <IndexVideo
-      v-else
-      :column="column"
-      :row="row"
-    />
+    <ClientOnly v-else>
+      <IndexVideo
+        :column="column"
+        :row="row"
+      />
+    </ClientOnly>
 
     <div
       style="
