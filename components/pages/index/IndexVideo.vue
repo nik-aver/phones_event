@@ -111,6 +111,13 @@ const startVideo = () => {
 };
 
 onMounted(() => {
+  document.querySelector("body").addEventListener(
+    "touchmove",
+    (event) => {
+      event.preventDefault();
+    },
+    { passive: false },
+  );
   startVideo();
 });
 

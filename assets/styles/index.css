@@ -6,7 +6,6 @@ body {
   height: 100%;
   font-weight: 500;
   color: #151616;
-  overscroll-behavior-y: none;
 }
 
 #__nuxt {
