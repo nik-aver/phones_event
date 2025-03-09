@@ -76,12 +76,17 @@ const createIntervalTimer = () => {
 
 const startVideo = () => {
   const date = new Date();
+  const millisecond = date.getMilliseconds();
+  const seconds = date.getSeconds();
 
-  timer.value = 10 - date.getSeconds().toString().split("").pop();
+  timer.value = 10 - seconds.toString().split("").pop();
 
-  if (timer.value === 0) {
-    return videoPlay();
-  }
+  setTimeout(
+    () => {
+      video.value.play();
+    },
+    timer.value * 1000 - millisecond,
+  );
 
   return createIntervalTimer();
 };
