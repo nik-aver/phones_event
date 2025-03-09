@@ -3,7 +3,7 @@
     <IndexForm v-if="!column || !row" />
 
     <IndexVideo
-      v-else
+      v-show="column && row"
       :column="column"
       :row="row"
     />
