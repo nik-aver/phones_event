@@ -42,11 +42,14 @@ const props = defineProps({
 });
 
 const video = ref(null);
-const timer = ref({
-  milliseconds: null,
-  minutes: null,
-  seconds: null,
-});
+let intervalTimer = null;
+
+const { setMinutes, setSeconds, setTimer } = useTimeStore();
+const { timer } = storeToRefs(useTimeStore());
+
+if (typeof window === "undefined") {
+  setTimer();
+}
 
 const getFormat = (value) => {
   if (!value) {
@@ -57,14 +60,12 @@ const getFormat = (value) => {
 };
 
 const time = computed(() => {
-  if (!timer.value.minutes && !timer.value.seconds) {
+  if (!timer.value?.minutes && !timer.value?.seconds) {
     return null;
   }
 
-  return `${getFormat(timer.value.minutes)} : ${getFormat(timer.value.seconds)}`;
+  return `${getFormat(timer.value?.minutes)} : ${getFormat(timer.value?.seconds)}`;
 });
-
-let intervalTimer = null;
 
 const destroyIntervalTimer = () => {
   clearInterval(intervalTimer);
@@ -73,10 +74,10 @@ const destroyIntervalTimer = () => {
 const createIntervalTimer = () => {
   intervalTimer = setInterval(() => {
     if (timer.value.seconds === 0) {
-      timer.value.minutes = timer.value.minutes - 1;
-      timer.value.seconds = 59;
+      setMinutes(timer.value.minutes - 1);
+      setSeconds(59);
     } else {
-      timer.value.seconds = timer.value.seconds - 1;
+      setSeconds(timer.value.seconds - 1);
     }
 
     if (timer.value.minutes === 0 && timer.value.seconds === 0) {
@@ -93,23 +94,6 @@ const startVideoDelay = (timerMillisecond) => {
   }, timerMillisecond);
 };
 
-const startVideo = () => {
-  const date = new Date();
-  const currentMinutes = date.getMinutes().toString().split("").pop();
-
-  timer.value.milliseconds = 1000 - date.getMilliseconds();
-  timer.value.seconds = 60 - date.getSeconds();
-  timer.value.minutes = (currentMinutes >= 5 ? 10 : 5) - currentMinutes - 1;
-
-  startVideoDelay(
-    timer.value.minutes * 60 * 1000 +
-      timer.value.seconds * 1000 +
-      timer.value.milliseconds,
-  );
-
-  return createIntervalTimer();
-};
-
 onMounted(() => {
   document.querySelector("body").addEventListener(
     "touchmove",
@@ -118,7 +102,14 @@ onMounted(() => {
     },
     { passive: false },
   );
-  startVideo();
+
+  startVideoDelay(
+    timer.value.minutes * 60 * 1000 +
+      timer.value.seconds * 1000 +
+      timer.value.milliseconds,
+  );
+
+  return createIntervalTimer();
 });
 
 onUnmounted(() => {
