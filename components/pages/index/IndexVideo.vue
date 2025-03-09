@@ -4,7 +4,6 @@
       ref="video"
       class="video"
       muted
-      loop
       playsinline
       preload="metadata"
       :style="{
@@ -13,7 +12,7 @@
         '--column': props.column,
         '--row': props.row,
       }"
-      src="/public/video2.mp4"
+      src="/public/video3.mp4"
     />
 
     <div
@@ -25,6 +24,7 @@
 </template>
 
 <script setup>
+import { setInterval } from "#app/compat/interval.js";
 import { onMounted } from "vue";
 
 import { INDEX_META } from "~/constants/pages/index/meta.js";
@@ -43,20 +43,28 @@ const props = defineProps({
 const video = ref(null);
 const timer = ref(null);
 
-let cookieInterval = null;
+let intervalTimer = null;
+let intervalVideo = null;
 
 const videoPlay = () => {
   if (video.value) {
     video.value.play();
+    intervalVideo = setInterval(() => {
+      video.value.currentTime = 0;
+    }, 10000);
   }
 };
 
 const destroyIntervalTimer = () => {
-  clearInterval(cookieInterval);
+  clearInterval(intervalTimer);
+};
+
+const destroyIntervalVideo = () => {
+  clearInterval(intervalVideo);
 };
 
 const createIntervalTimer = () => {
-  cookieInterval = setInterval(() => {
+  intervalTimer = setInterval(() => {
     timer.value = timer.value - 1;
 
     if (timer.value === 0) {
@@ -84,6 +92,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   destroyIntervalTimer();
+  destroyIntervalVideo();
 });
 </script>
 
