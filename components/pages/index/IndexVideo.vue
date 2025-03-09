@@ -4,6 +4,7 @@
       ref="video"
       class="video"
       muted
+      loop
       playsinline
       preload="metadata"
       :style="{
@@ -46,14 +47,14 @@ const timer = ref(null);
 let intervalTimer = null;
 let intervalVideo = null;
 
-const videoPlay = () => {
-  if (video.value) {
-    video.value.play();
-    intervalVideo = setInterval(() => {
-      video.value.currentTime = 0;
-    }, 10000);
-  }
-};
+// const videoPlay = () => {
+//   if (video.value) {
+//     video.value.play();
+//     intervalVideo = setInterval(() => {
+//       video.value.currentTime = 0;
+//     }, 10000);
+//   }
+// };
 
 const destroyIntervalTimer = () => {
   clearInterval(intervalTimer);
@@ -68,8 +69,7 @@ const createIntervalTimer = () => {
     timer.value = timer.value - 1;
 
     if (timer.value === 0) {
-      destroyIntervalTimer();
-      return videoPlay();
+      return destroyIntervalTimer();
     }
   }, 1000);
 };
