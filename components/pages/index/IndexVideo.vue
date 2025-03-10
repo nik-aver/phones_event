@@ -6,6 +6,7 @@
       muted
       loop
       playsinline
+      @play="onPlayHandler"
       preload="auto"
       :style="{
         '--max-column': INDEX_META.maxColumn,
@@ -18,9 +19,13 @@
 
     <div
       class="timer"
-      v-show="time"
-      v-html="time"
-    />
+      v-show="!isPlayVideo"
+    >
+      <div
+        v-html="time"
+        v-if="time"
+      />
+    </div>
   </div>
 </template>
 
@@ -41,15 +46,25 @@ const props = defineProps({
   },
 });
 
-const video = ref(null);
+const API_TIME_URL = "/api/time";
 let intervalTimer = null;
 
-const { setMilliseconds, setMinutes, setSeconds, setTimer } = useTimeStore();
-const { timer } = storeToRefs(useTimeStore());
+const video = ref(null);
+const isPlayVideo = ref(false);
 
-if (typeof window === "undefined") {
-  setTimer();
-}
+const timer = ref({
+  milliseconds: 0,
+  minutes: 0,
+  seconds: 0,
+});
+
+const setMinutes = (minutes) => {
+  timer.value.minutes = minutes;
+};
+
+const setSeconds = (seconds) => {
+  timer.value.seconds = seconds;
+};
 
 const getFormat = (value) => {
   if (!value) {
@@ -86,19 +101,16 @@ const createIntervalTimer = () => {
   }, 1000);
 };
 
-const startVideoDelay = (timerMillisecond) => {
+const startVideoDelay = (timeMillisecond) => {
   setTimeout(() => {
     if (video.value) {
       video.value.play();
     }
-  }, timerMillisecond);
+  }, timeMillisecond);
 };
 
-const setDurationPageLoading = () => {
-  const duration = performance.getEntriesByType("navigation")[0].duration;
-
-  if (duration && duration > 0)
-    setMilliseconds(timer.value.milliseconds - duration);
+const onPlayHandler = () => {
+  isPlayVideo.value = true;
 };
 
 const blockScrollUpdatePage = () => {
@@ -111,16 +123,37 @@ const blockScrollUpdatePage = () => {
   );
 };
 
-onMounted(() => {
-  setDurationPageLoading();
+const getTime = async () => {
+  const dateStart = new Date();
+  const response = await fetch(API_TIME_URL);
+  const data = await response.json();
+  const dateFinish = new Date();
+
+  return {
+    time: {
+      milliseconds: data.milliseconds,
+      minutes: data.minutes,
+      seconds: data.seconds,
+    },
+    timeDelay: dateFinish - dateStart,
+  };
+};
+
+onMounted(async () => {
+  const { time, timeDelay } = await getTime();
   blockScrollUpdatePage();
+
   startVideoDelay(
-    timer.value.minutes * 60 * 1000 +
-      timer.value.seconds * 1000 +
-      timer.value.milliseconds,
+    time.minutes * 60 * 1000 +
+      time.seconds * 1000 +
+      time.milliseconds -
+      timeDelay,
   );
 
-  return createIntervalTimer();
+  setMinutes(time.minutes);
+  setSeconds(time.seconds);
+
+  createIntervalTimer();
 });
 
 onUnmounted(() => {
