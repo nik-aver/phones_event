@@ -98,7 +98,7 @@ const setDurationPageLoading = () => {
   const duration = performance.getEntriesByType("navigation")[0].duration;
 
   if (duration && duration > 0)
-    setMilliseconds(timer.value.milliseconds + duration);
+    setMilliseconds(timer.value.milliseconds - duration);
 };
 
 const blockScrollUpdatePage = () => {
