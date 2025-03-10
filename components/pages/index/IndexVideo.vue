@@ -44,7 +44,7 @@ const props = defineProps({
 const video = ref(null);
 let intervalTimer = null;
 
-const { setMinutes, setSeconds, setTimer } = useTimeStore();
+const { setMilliseconds, setMinutes, setSeconds, setTimer } = useTimeStore();
 const { timer } = storeToRefs(useTimeStore());
 
 if (typeof window === "undefined") {
@@ -94,7 +94,14 @@ const startVideoDelay = (timerMillisecond) => {
   }, timerMillisecond);
 };
 
-onMounted(() => {
+const setDurationPageLoading = () => {
+  const duration = performance.getEntriesByType("navigation")[0].duration;
+
+  if (duration && duration > 0)
+    setMilliseconds(timer.value.milliseconds + duration);
+};
+
+const blockScrollUpdatePage = () => {
   document.querySelector("body").addEventListener(
     "touchmove",
     (event) => {
@@ -102,7 +109,11 @@ onMounted(() => {
     },
     { passive: false },
   );
+};
 
+onMounted(() => {
+  setDurationPageLoading();
+  blockScrollUpdatePage();
   startVideoDelay(
     timer.value.minutes * 60 * 1000 +
       timer.value.seconds * 1000 +
