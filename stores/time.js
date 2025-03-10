@@ -18,9 +18,11 @@ export const useTimeStore = defineStore("timeStore", () => {
 
     const date = new Date();
     const currentMinutes = date.getMinutes().toString().split("").pop();
+    const dateSecond = date.getSeconds();
+    const dateMilliseconds = date.getMilliseconds();
 
-    setMilliseconds(1000 - date.getMilliseconds());
-    setSeconds(60 - date.getSeconds());
+    setMilliseconds(1000 - dateMilliseconds ? dateMilliseconds : 1);
+    setSeconds(60 - dateSecond ? dateSecond : 1);
     setMinutes((currentMinutes >= 5 ? 10 : 5) - currentMinutes - 1);
 
     initTimer.value.seconds = timer.value.seconds;
